@@ -8,6 +8,17 @@ app.use(morgan('dev'));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
 
+function generateRandomString() {
+  let randnum = function () { return Math.floor(Math.random() * 10 + 1); }; //random numbers
+  let randLLet = function () { return Math.floor(Math.random() * (90 - 65 + 1) + 65); }; // random ascii letter upper case
+  let randULet = function () { return Math.floor(Math.random() * (122 - 97 + 1) + 97); }; //random ascii letter lowercase
+  let randArray = [randnum, randLLet, randULet]; ///Generate numbers 0-2 to select a random character.
+  let randNum = function () { return Math.floor(Math.random() * 2); };
+  let randString = "";
+  for (let i = 0; i < 6; i++) {
+    randArray[randNum];
+  }
+}
 
 
 var urlDatabase = {
