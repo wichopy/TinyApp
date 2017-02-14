@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-</head>
-<body>
- <%- include('./partials/_headers') %>
-<div id="url list" class="container-fluid container">
-  <div class="row"><h2><b>URL Database</b> </h2> 
-  </div>
 
-  <div class="row">
-    <div class = "col"style="background-color: lightblue"><b> Shorted URLS</b>
-    </div>
-    <div class = "col"> <b>Original URLS</b>
-    </div>   
-  </div>
-<% for (var url in urls) { %>   
-  <div class = "row">        
-    <div class = 'col' style="background-color: lightblue">
-        <%= url %> 
-    </div>
-    <div class="col">
-    <%= urls[url] %>
-    </div>       
-  </div>
-  <% } %>
-</div>
-<p> Go <a href="">here</a> to shorten another URL!</p>
+<head>
+    <title>TinyApp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+
+<body>
+    <%- include('./partials/_headers') %>
+        <div class="putStatusHere"></div>
+        <div id="url list" class="container-fluid container">
+            <div class="row">
+                <h2><b>URL Database</b> </h2>
+            </div>
+
+            <div class="row">
+                <div class="col" style="background-color: lightblue"><b> Shorted URLS</b>
+                </div>
+                <div class="col"> <b>Original URLS</b>
+                </div>
+            </div>
+            <% for (var url in urls) { %>
+                <div class="row">
+                    <div class='col' style="background-color: lightblue">
+                        <%= url %>
+                    </div>
+                    <div class="col">
+                        <%= urls[url] %>
+                            <form id="delete" method="POST" action="/urls/<%= url %>/delete">
+                                <button type="delete" form="delete" value="Delete">Delete
+                            </button>
+                            </form>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+        <p> Go <a href="">here</a> to shorten another URL!</p>
 
 </body>
+
 </html>
+
+<script src="scripts/scripts.js"></script>

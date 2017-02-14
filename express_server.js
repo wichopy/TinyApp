@@ -47,7 +47,7 @@ var urlDatabase = {
 };
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL)
+  res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
   var templateVars = { urls: urlDatabase };
@@ -78,7 +78,13 @@ app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-
+app.post("/urls/:id/delete", (req, res) => {
+  console.log(`Deleting ${req.params.id}`); // debug statement to see POST parameters
+  delete urlDatabase[req.params.id];
+  //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
+  var templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // debug statement to see POST parameters
