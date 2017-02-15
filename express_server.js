@@ -75,18 +75,24 @@ app.get("/", (req, res) => {
   res.render("home", templateVars);
 });
 
+app.get("/logout", (req, res) => {
+  console.log("Loging out, clear cookies for this session.");
+
+  res.clearCookie('name', { path: "/" });
+  console.log(req.cookies);
+});
 app.get("/login", (req, res) => {
   //console.log(req.body);
   //console.log(req.cookie);
-
-  res.render("login");
+  let templateVars = { username: req.cookies['name'] };
+  res.render("login", templateVars);
 });
 
 app.post("/login", (req, res) => {
   console.log(req.body);
   console.log(req.body.username);
   //console.log(req.cookie);
-  res.cookie('name', req.body.username);
+  res.cookie('name', req.body.username, { path: "/" });
   //console.log(res.cookies());
   res.redirect("/");
 });
