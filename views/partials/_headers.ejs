@@ -7,8 +7,9 @@
 <div class="col-2">
   <% if (username) { %>
      Hello there <%= username %> !
+     <a href="/logout" > Logout </a>
   <% } else { %>  
-    Login please
+    <a href="/login" >Login please</a>
   <%}%>    
 </div>
 </div>

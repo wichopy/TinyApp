@@ -9,7 +9,7 @@
         <h1>Welcome!</h1>
 
         <h2><%= username %></h2>
-
-</body>
-
+        <% if (username) {%>
+          <a href="/urls">Check out your urls! </a>
+          <%}%>
 </html>

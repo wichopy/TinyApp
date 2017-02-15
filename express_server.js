@@ -80,6 +80,7 @@ app.get("/logout", (req, res) => {
 
   res.clearCookie('name', { path: "/" });
   console.log(req.cookies);
+  res.redirect("/"); //If you don't send a response your cookie wont be cleared.
 });
 app.get("/login", (req, res) => {
   //console.log(req.body);
