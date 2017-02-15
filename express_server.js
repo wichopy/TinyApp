@@ -97,12 +97,26 @@ app.post("/login", (req, res) => {
   //console.log(res.cookies());
   res.redirect("/");
 });
+const users = {};
+var userid = 0;
 app.get('/register', (req, res) => {
-  res.render("register");
+  console.log("lets make a new user!");
+  var templateVars = { username: req.cookies['name'] };
+  res.render("register", templateVars);
+  //need to implement status codes for:
+  //if user exists already.
+  //if email or password are empty.
+  //if email exists already.
+
 });
 //use res.cookie to access cookies in responses.
 app.post('/register', (req, res) => {
+  userid += 1;
   console.log(req.body);
+  users[userid] = req.body;
+  res.redirect("/");
+  console.log("this is your users database now");
+  console.log(users);
 });
 
 app.get("/api", (req, res) => {
