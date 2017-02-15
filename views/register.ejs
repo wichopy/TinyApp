@@ -3,20 +3,26 @@
 <head></head>
 
 <body>
+    <%- include('./partials/_headers') %>
+        <h1>Register new users! </h1>
 
-    <h1>Register! </h1>
-
-    <form method="POST" action="/register">
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" />
-        </div>
-        </br>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" />
-        </div>
-    </form>
+        <form method="POST" action="/register">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="username" />
+            </div>
+            </br>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" />
+            </div>
+            </br>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" />
+            </div>
+            <input type="submit" value="Submit">
+        </form>
 
 </body>
 

@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <!--<script>
+        //http://stackoverflow.com/questions/30419929/setting-cookies-with-form-input
+        var today = new Date();
+        var expiry = new Date(today.getTime() + 1 * 24 * 3600 * 1000); // plus 1 days
+
+        function setCookie(name, value) {
+            console.log(`name: ${name} and value: ${value}`);
+            document.cookie = name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+        }
+
+        function putCookie(form)
+        //this should set the UserName cookie to the proper value;
+        {
+            console.log(form);
+            setCookie("userName", form[0].username.value);
+
+            return true;
+        }
+    </script>-->
+
+</head>
+
+<body>
+    <%- include('./partials/_headers') %>
+        <h1>Login! </h1>
+
+        <form method="POST" action="/login">
+            <div>
+                <label for="username">Name:</label>
+                <input type="text" id="username" name="username" />
+            </div>
+
+            <!--
+            // </br>
+            // <div>
+            //     <label for="email">Email:</label>
+            //     <input type="email" id="email" name="email" />
+            // </div>
+            </br>
+            -->
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" />
+            </div>
+            <input type="submit" value="Submit" id="submit" onclick="putCookie(document.getElementsByTagName('form'));">
+        </form>
+
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080; //adapts to ports of the application.
+const cookieParser = require('cookie-parser');
+
 //app.set('port',PORT); 
 //const routes = require("./routes.js");
 
@@ -13,6 +15,7 @@ app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded thin
 app.use(bodyParser.json()); // parse submission in multiple formats.
 app.use(morgan('dev'));
 app.use(express.static('public'));
+app.use(cookieParser());
 app.set("view engine", "ejs");
 //app.use(express.urlencoded());
 
@@ -55,18 +58,44 @@ var urlDatabase = {
 };
 //ROUTES!
 //this can modify the 
-app.use((req, res, next) => {
-  req.random = 42;
-  next(); //error, go somewhere else, data,
+
+// app.use((req, res, next) => {
+//   req.random = 42;
+//   next(); //error, go somewhere else, data,
+// });
+
+
+app.get("/", (req, res) => {
+  //console.log(req.body);
+  //console.log(req.cookie);
+  console.log("navigated to home page");
+  console.log(req.cookies['name']);
+  let templateVars = { username: req.cookies['name'] };
+  //console.log(local);
+  res.render("home", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  //console.log(req.body);
+  //console.log(req.cookie);
 
+  res.render("login");
+});
+
+app.post("/login", (req, res) => {
+  console.log(req.body);
+  console.log(req.body.username);
+  //console.log(req.cookie);
+  res.cookie('name', req.body.username);
+  //console.log(res.cookies());
+  res.redirect("/");
+});
 app.get('/register', (req, res) => {
-
+  res.render("register");
 });
-
+//use res.cookie to access cookies in responses.
 app.post('/register', (req, res) => {
-
+  console.log(req.body);
 });
 
 app.get("/api", (req, res) => {
@@ -82,23 +111,24 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
-  var templateVars = { urls: urlDatabase }; //all of them are stored in an object called locals
+  var templateVars = {
+    urls: urlDatabase,
+    username: req.cookies['name']
+  }; //all of them are stored in an object called locals
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
-
-app.get("/", (req, res) => {
-  res.end("Hello!");
+  var templateVars = { username: req.cookies['name'] };
+  res.render("urls_new", templateVars);
 });
 
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id]
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies['name']
   };
   res.render("urls_show", templateVars);
 });
@@ -127,7 +157,7 @@ app.post("/urls/:id/delete", (req, res) => {
   console.log(`Deleting ${req.params.id}`); // debug statement to see POST parameters
   delete urlDatabase[req.params.id];
   //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
-  var templateVars = { urls: urlDatabase };
+  //var templateVars = { urls: urlDatabase };
   res.redirect("/urls/?alert=success&action=delete");
 });
 
