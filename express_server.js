@@ -70,29 +70,33 @@ var urlDatabase = {
 };
 
 function checkLogin(usernm, passwd) {
+  let login;
   for (var userid in users) {
-    console.log(users[userid]);
-    console.log(usernm);
-    console.log(passwd);
+    // console.log("checking for login credentials");
+    // console.log("username is:");
+    // console.log(users[userid]);
+    // console.log(usernm);
+    // console.log(passwd);
+
     if (usernm === users[userid].username && passwd === users[userid].password) {
-      console.log("login worked!");
-    } else {
-      return console.log("login failed");
+      login = "login worked!";
     }
   }
+  console.log(login);
 }
 
 function emailFromUserCookie(cookie) {
-  debugger;
+  var output = ""
   for (var userid in users) {
     console.log(users[userid]);
     console.log(cookie);
     if (cookie === users[userid].username) {
-      return users[userid].email;
+      output = users[userid].email;
     } else {
-      return "cant find email in database";
+      output = "cant find email in database";
     }
   }
+  return output;
 }
 //ROUTES!
 //this can modify the 
@@ -108,6 +112,7 @@ app.get("/", (req, res) => {
     username: req.cookies['name'],
     email: emailFromUserCookie(req.cookies.name)
   };
+  console.log(users);
   res.render("home", templateVars);
 });
 
