@@ -85,6 +85,22 @@ function checkLogin(usernm, passwd) {
   console.log(login);
 }
 
+function checkUserExists(usernm, email) {
+  let login = "login or email is unique";
+  for (var userid in users) {
+    // console.log("checking for login credentials");
+    // console.log("username is:");
+    // console.log(users[userid]);
+    // console.log(usernm);
+    // console.log(passwd);
+
+    if (usernm === users[userid].username || email === users[userid].email) {
+      login = "return error, email or username exists already";
+    }
+  }
+  console.log(login);
+}
+
 function emailFromUserCookie(cookie) {
   var output = ""
   for (var userid in users) {
@@ -160,13 +176,19 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send({ error: "Make sure you put a password and email address!" });
+
   } else {
-    userid += 1;
-    console.log(req.body);
-    users[userid] = req.body;
-    res.redirect("/");
-    console.log("this is your users database now");
-    console.log(users);
+    if (checkUserExists(req.body.username, req.body.email) === "login or email is unique") {
+
+      userid += 1;
+      console.log(req.body);
+      users[userid] = req.body;
+      res.redirect("/");
+      console.log("this is your users database now");
+      console.log(users);
+    } else {
+      res.status(400).send("user or email already exists.");
+    }
   }
 });
 
