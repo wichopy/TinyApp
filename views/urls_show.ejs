@@ -18,11 +18,16 @@
         <%= shortURL %> 
     </div>
     <div class="col">
-    <%= longURL %>
+   
+      <form id="update" method="POST" placeholder="<%= longURL %>" action=" /urls/<%= shortURL %>/update">
+      <input id="longURL" type="text" name="longURL" placeholder=" <%= longURL %>" style="width: 300px" >
+      <button type="submit" form="update" value="update">Update
+      </button>
+      </form>
     </div>       
   </div>
 </div>
-
+<a href="/urls/">Return to URL List</a>
 
 </body>
 </html>

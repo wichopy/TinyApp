@@ -3,6 +3,9 @@
 
 <head>
     <title>TinyApp</title>
+    <!--
+    <script src="../scripts/scripts.js"></script>
+    -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
@@ -32,6 +35,7 @@
                     </div>
                     <div class="col">
                         <%= urls[url] %>
+                            <a href="/urls/<%= url %>">Edit</a>
                             <form id="delete" method="POST" action="/urls/<%= url %>/delete">
                                 <button type="delete" form="delete" value="Delete">Delete
                             </button>
@@ -40,10 +44,27 @@
                 </div>
                 <% } %>
         </div>
-        <p> Go <a href="">here</a> to shorten another URL!</p>
+        <p> Go <a href="/urls/new">here</a> to shorten another URL!</p>
 
 </body>
 
 </html>
 
-<script src="scripts/scripts.js"></script>
+<script>
+    $(document).ready(function() {
+
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            //sURLVariables = sPageURL.split('&'),
+            sParameterName;
+        console.log(sPageURL);
+
+        sParameterName = sPageURL.split('=');
+        console.log(sParameterName);
+        if (sParameterName[0] === "alert") {
+            sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+
+
+        //console.log("Check response, update alert message.");
+    });
+</script>

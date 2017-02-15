@@ -7,6 +7,7 @@ app.use(bodyParser.urlencoded({ entended: true }));
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
+//app.use(express.urlencoded());
 
 function generateRandomString() {
   var randnum = function () { return Math.floor(Math.random() * 10); }; //random numbers
@@ -54,14 +55,17 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.get("/", (req, res) => {
-  res.end("Hello!");
-});
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+app.get("/", (req, res) => {
+  res.end("Hello!");
+});
+
+
 app.post("/urls", (req, res) => {
+
   console.log(req.body); // debug statement to see POST parameters
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
@@ -74,8 +78,22 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+
 app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+app.post("/urls/:id/update", (req, res) => {
+  console.log(`Updating ${req.params.id} : change from`); // debug statement to see POST parameters
+  console.log(urlDatabase[req.params.id]);
+  console.log("to");
+  var longURL = req.body.longURL;
+  urlDatabase[req.params.id] = longURL;
+  console.log(longURL);
+  //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
+  //var templateVars = { urls: urlDatabase };
+  res.redirect("/urls/?alert=success&action=update");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -83,8 +101,10 @@ app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
   var templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
+  res.redirect("/urls/?alert=success&action");
 });
+
+
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // debug statement to see POST parameters
