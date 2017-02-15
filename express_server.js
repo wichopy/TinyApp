@@ -1,9 +1,16 @@
 var express = require("express");
 var app = express();
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 8080; //adapts to ports of the application.
+//app.set('port',PORT); 
+//const routes = require("./routes.js");
+
+//app(routes); // require routes.js and use that for our routes.
+//app.get(PORT) //how faisal did it
+//
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ entended: true }));
+app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
+app.use(bodyParser.json()); // parse submission in multiple formats.
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
@@ -17,23 +24,23 @@ function generateRandomString() {
   var randNum = function () { return Math.floor(Math.random() * 3); };
   var randString = "";
   for (var i = 0; i < 6; i++) {
-    console.log("pick a random function");
-    console.log(randNum())
+    //console.log("pick a random function");
+    //console.log(randNum())
     var char = randArray[randNum()];
     //console.log(char);
-    console.log("run this random function to create a random number or letter");
+    // console.log("run this random function to create a random number or letter");
     char = char();
-    console.log(char);
+    // console.log(char);
     if (char >= 0 && char <= 9) {
-      console.log("add number to randomString")
+      // console.log("add number to randomString")
       randString += String(char);
     }
     if (char >= 65 && char <= 90) {
-      console.log("add upper case letter to random String")
+      // console.log("add upper case letter to random String")
       randString += String.fromCharCode(char);
     }
     if (char >= 97 && char <= 122) {
-      console.log("add lower case letter to random String")
+      // console.log("add lower case letter to random String")
       randString += String.fromCharCode(char);
     }
   }
@@ -46,7 +53,27 @@ var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+//ROUTES!
+//this can modify the 
+app.use((req, res, next) => {
+  req.random = 42;
+  next(); //error, go somewhere else, data,
+});
 
+
+app.get('/register', (req, res) => {
+
+});
+
+app.post('/register', (req, res) => {
+
+});
+
+app.get("/api", (req, res) => {
+  res.json({
+    key: 'Value'
+  });
+}); // chrome plugin for JSON pretify
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   console.log("trying to redirect now ...");
@@ -55,7 +82,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
-  var templateVars = { urls: urlDatabase };
+  var templateVars = { urls: urlDatabase }; //all of them are stored in an object called locals
   res.render("urls_index", templateVars);
 });
 
@@ -82,12 +109,12 @@ app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.post("/urls/:id/update", (req, res) => {
+app.post("/urls/:id/update", (req, res) => { //may not need to
   console.log(`Updating ${req.params.id} : change from`); // debug statement to see POST parameters
   console.log(urlDatabase[req.params.id]);
   console.log("to");
   var longURL = req.body.longURL;
-  urlDatabase[req.params.id] = longURL;
+  urlDatabase[req.params.id] = ("http://" + longURL);
   console.log(longURL);
   console.log("This is what the database looks like now:");
   console.log(urlDatabase); // NEED to put http:// in new address or else it will not redirect properly.
@@ -101,16 +128,24 @@ app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
   var templateVars = { urls: urlDatabase };
-  res.redirect("/urls/?alert=success&action");
+  res.redirect("/urls/?alert=success&action=delete");
 });
 
 
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // debug statement to see POST parameters
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  console.log("call randomString generator");
+  let newString = generateRandomString();
+  console.log(`add to database`);
+  urlDatabase[newString] = "http://" + req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+module.exports = app;

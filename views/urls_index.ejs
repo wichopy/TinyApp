@@ -16,33 +16,44 @@
 
 <body>
     <%- include('./partials/_headers') %>
+        <h2><b>Your Tiny URL's</b> </h2>
         <div class="putStatusHere"></div>
-        <div id="url list" class="container-fluid container">
-            <div class="row">
-                <h2><b>URL Database</b> </h2>
-            </div>
+        <div class="container">
+            <table id="urllist" class="table-striped" width="600">
+                <thead>
+                    <tr>
+                        <th><b> Shorted URLS</b></th>
+                        <th><b>Original URLS</b></th>
+                        <th><b>Modify</b></th>
+                    </tr>
+                </thead>
 
-            <div class="row">
-                <div class="col" style="background-color: lightblue"><b> Shorted URLS</b>
-                </div>
-                <div class="col"> <b>Original URLS</b>
-                </div>
-            </div>
-            <% for (var url in urls) { %>
-                <div class="row">
-                    <div class='col' style="background-color: lightblue">
-                        <%= url %>
-                    </div>
-                    <div class="col">
-                        <%= urls[url] %>
-                            <a href="/urls/<%= url %>">Edit</a>
-                            <form id="delete" method="POST" action="/urls/<%= url %>/delete">
-                                <button type="delete" form="delete" value="Delete">Delete
+                <tbody>
+                    <% for (var url in urls) { %>
+                        <tr>
+                            <td>
+                                <a href="/u/<%= url %>">
+                                    <%= url %>
+                                </a>
+                            </td>
+                            <td>
+                                <%= urls[url] %>
+                            </td>
+                            <td>
+                                <form action="/urls/<%= url %>">
+                                    <input type="submit" class="btn btn-secondary" value="Edit" />
+                                </form>
+
+                                <form id="delete" method="POST" action="/urls/<%= url %>/delete">
+                                    <button type="delete" form="delete" class="btn btn-danger" value="Delete">Delete
                             </button>
-                            </form>
-                    </div>
-                </div>
-                <% } %>
+                                </form>
+                            </td>
+                            <tr>
+                                <% } %>
+                </tbody>
+
+            </table>
         </div>
         <p> Go <a href="/urls/new">here</a> to shorten another URL!</p>
 
