@@ -52,10 +52,35 @@ function generateRandomString() {
 
 
 
+
+const users = {
+  0: {
+    username: 'admin',
+    email: "admin@tiny.ca",
+    password: "password"
+  }
+};
+
+
+
+var userid = 0; //current user ID
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+function emailFromUserCookie(cookie) {
+  debugger;
+  for (var userid in users) {
+    console.log(users[userid]);
+    console.log(cookie);
+    if (cookie === users[userid].username) {
+      return users[userid].email;
+    } else {
+      return "cant find email in database";
+    }
+  }
+}
 //ROUTES!
 //this can modify the 
 
@@ -64,14 +89,21 @@ var urlDatabase = {
 //   next(); //error, go somewhere else, data,
 // });
 
-
+//HOMEPAGE
 app.get("/", (req, res) => {
   //console.log(req.body);
   //console.log(req.cookie);
-  console.log("navigated to home page");
-  console.log(req.cookies['name']);
-  let templateVars = { username: req.cookies['name'] };
-  //console.log(local);
+  //console.log("navigated to home page");
+  //console.log(req.cookies['name']);
+  let templateVars = {
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
+  };
+  //console.log(users);
+  //console.log(req.cookies.name);
+  //console.log("running find email functon!");
+  //console.log(emailFromUserCookie(req.cookies.name));
+  //console.log(req.cookies);
   res.render("home", templateVars);
 });
 
@@ -82,10 +114,14 @@ app.get("/logout", (req, res) => {
   console.log(req.cookies);
   res.redirect("/"); //If you don't send a response your cookie wont be cleared.
 });
+
 app.get("/login", (req, res) => {
   //console.log(req.body);
   //console.log(req.cookie);
-  let templateVars = { username: req.cookies['name'] };
+  let templateVars = {
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
+  };
   res.render("login", templateVars);
 });
 
@@ -97,11 +133,13 @@ app.post("/login", (req, res) => {
   //console.log(res.cookies());
   res.redirect("/");
 });
-const users = {};
-var userid = 0;
+
 app.get('/register', (req, res) => {
   console.log("lets make a new user!");
-  var templateVars = { username: req.cookies['name'] };
+  var templateVars = {
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
+  };
   res.render("register", templateVars);
   //need to implement status codes for:
   //if user exists already.
@@ -134,13 +172,17 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls", (req, res) => {
   var templateVars = {
     urls: urlDatabase,
-    username: req.cookies['name']
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
   }; //all of them are stored in an object called locals
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  var templateVars = { username: req.cookies['name'] };
+  var templateVars = {
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
+  }
   res.render("urls_new", templateVars);
 });
 
@@ -149,8 +191,10 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies['name']
+    username: req.cookies['name'],
+    email: emailFromUserCookie(req.cookies.name)
   };
+  console.log(templateVars.email);
   res.render("urls_show", templateVars);
 });
 
