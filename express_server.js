@@ -69,6 +69,19 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+function checkLogin(usernm, passwd) {
+  for (var userid in users) {
+    console.log(users[userid]);
+    console.log(usernm);
+    console.log(passwd);
+    if (usernm === users[userid].username && passwd === users[userid].password) {
+      console.log("login worked!");
+    } else {
+      return console.log("login failed");
+    }
+  }
+}
+
 function emailFromUserCookie(cookie) {
   debugger;
   for (var userid in users) {
@@ -91,33 +104,21 @@ function emailFromUserCookie(cookie) {
 
 //HOMEPAGE
 app.get("/", (req, res) => {
-  //console.log(req.body);
-  //console.log(req.cookie);
-  //console.log("navigated to home page");
-  //console.log(req.cookies['name']);
   let templateVars = {
     username: req.cookies['name'],
     email: emailFromUserCookie(req.cookies.name)
   };
-  //console.log(users);
-  //console.log(req.cookies.name);
-  //console.log("running find email functon!");
-  //console.log(emailFromUserCookie(req.cookies.name));
-  //console.log(req.cookies);
   res.render("home", templateVars);
 });
 
 app.get("/logout", (req, res) => {
   console.log("Loging out, clear cookies for this session.");
-
   res.clearCookie('name', { path: "/" });
   console.log(req.cookies);
   res.redirect("/"); //If you don't send a response your cookie wont be cleared.
 });
 
 app.get("/login", (req, res) => {
-  //console.log(req.body);
-  //console.log(req.cookie);
   let templateVars = {
     username: req.cookies['name'],
     email: emailFromUserCookie(req.cookies.name)
@@ -128,6 +129,9 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   console.log(req.body);
   console.log(req.body.username);
+  console.log(req.body.password);
+  checkLogin(req.body.username, req.body.password);
+  //function to check username and password.
   //console.log(req.cookie);
   res.cookie('name', req.body.username, { path: "/" });
   //console.log(res.cookies());
@@ -149,12 +153,16 @@ app.get('/register', (req, res) => {
 });
 //use res.cookie to access cookies in responses.
 app.post('/register', (req, res) => {
-  userid += 1;
-  console.log(req.body);
-  users[userid] = req.body;
-  res.redirect("/");
-  console.log("this is your users database now");
-  console.log(users);
+  if (req.body.email === "" || req.body.password === "") {
+    res.status(400).send({ error: "Make sure you put a password and email address!" });
+  } else {
+    userid += 1;
+    console.log(req.body);
+    users[userid] = req.body;
+    res.redirect("/");
+    console.log("this is your users database now");
+    console.log(users);
+  }
 });
 
 app.get("/api", (req, res) => {
