@@ -46,8 +46,12 @@ var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
+  console.log("trying to redirect now ...");
+  console.log(longURL);
+  console.log(req.params.shortURL);
   res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
@@ -63,12 +67,6 @@ app.get("/", (req, res) => {
   res.end("Hello!");
 });
 
-
-app.post("/urls", (req, res) => {
-
-  console.log(req.body); // debug statement to see POST parameters
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
-});
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
@@ -91,6 +89,8 @@ app.post("/urls/:id/update", (req, res) => {
   var longURL = req.body.longURL;
   urlDatabase[req.params.id] = longURL;
   console.log(longURL);
+  console.log("This is what the database looks like now:");
+  console.log(urlDatabase); // NEED to put http:// in new address or else it will not redirect properly.
   //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
   //var templateVars = { urls: urlDatabase };
   res.redirect("/urls/?alert=success&action=update");
