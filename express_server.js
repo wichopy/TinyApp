@@ -62,12 +62,15 @@ var urlDatabase = {
 //HOMEPAGE
 //-------------------
 app.get("/", (req, res) => {
+  debugger;
   if (!req.cookies.id) { ///UNDEFINED IS FALSEY!!
     res.render("home", { username: false, email: false }); //pass in false username and email info to force login or register in header.
+    debugger;
   } else {
     res.render("home", users[req.cookies.id]);
   }
 });
+
 
 //--------------------
 //login/register/logout
@@ -132,12 +135,16 @@ app.get("/u/:shortURL", (req, res) => {
 //URLS Routes
 //---------------------------------------
 app.get("/urls", (req, res) => {
-  var templateVars = {
-    urls: urlDatabase.userURLs(req.cookies.id),
-    username: users[req.cookies.id].username,
-    email: users[req.cookies.id].email,
-  };
-  res.render("urls_index", templateVars);
+  if (!req.cookies.id) {
+    res.redirect("/login");
+  } else {
+    var templateVars = {
+      urls: urlDatabase.userURLs(req.cookies.id),
+      username: users[req.cookies.id].username,
+      email: users[req.cookies.id].email,
+    };
+    res.render("urls_index", templateVars);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -150,14 +157,20 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    username: users[req.cookies.id].username,
-    email: users[req.cookies.id].email,
-    id: users[req.cookies.id].id
-  };
-  res.render("urls_show", templateVars);
+  debugger;
+  if (!req.cookies.id) {
+    debugger;
+    res.redirect("/login");
+  } else {
+    let templateVars = {
+      shortURL: req.params.id,
+      longURL: urlDatabase[req.params.id],
+      username: users[req.cookies.id].username,
+      email: users[req.cookies.id].email,
+      id: users[req.cookies.id].id
+    };
+    res.render("urls_show", templateVars);
+  }
 });
 app.post("/urls/:id/update", (req, res) => {
   var longURL = req.body.longURL;
@@ -172,7 +185,10 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let newString = generateRandomString();
-  urlDatabase[newString] = req.body.longURL;
+  urlDatabase[newString] = {
+    url: req.body.longURL,
+    userid: req.cookies.id
+  };
   res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
 });
 
