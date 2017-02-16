@@ -8,10 +8,14 @@ const generateRandomString = require('./generateRandom.js');
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 app.use(cookieSession({
   keys: ['user_id'],
   maxAge: 15 * 60 * 1000 //expires after 15 minutes
 }));
+//override using a query value:
+app.use(methodOverride('_method'));
+
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
 app.use(bodyParser.json()); // parse submission in multiple formats.
 app.use(morgan('dev'));
@@ -58,12 +62,14 @@ var urlDatabase = {
 };
 
 //ROUTES!
-//this can modify the 
 
-// app.use((req, res, next) => {
-//   req.random = 42;
-//   next(); //error, go somewhere else, data,
-// });
+//If you want to see my data without console logging use this handy link!
+app.get("/api", (req, res) => {
+  res.json({
+    users: users,
+    urls: urlDatabase
+  });
+}); // chrome plugin for JSON pretify
 
 //--------------------
 //HOMEPAGE
@@ -78,7 +84,6 @@ app.get("/", (req, res) => {
   }
 });
 
-
 //--------------------
 //login/register/logout
 //-------------------
@@ -88,7 +93,11 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login");
+  if (req.session.user_id) {
+    res.redirect("/");
+  } else {
+    res.render("login");
+  }
 });
 
 app.get('/register', (req, res) => {
@@ -134,24 +143,29 @@ app.post('/register', (req, res) => {
 });
 
 
-app.get("/api", (req, res) => {
-  res.json({
-    users: users,
-    urls: urlDatabase
-  });
-}); // chrome plugin for JSON pretify
 
+//Redirect to your long URL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].url;
-  res.redirect(longURL);
+  //let longURL = urlDatabase[req.params.shortURL].url;
+  if (urlDatabase[req.params.shortURL]) {
+    res.redirect(urlDatabase[req.params.shortURL].url);
+  } else {
+    res.status(404).send("No short URL here! Sorry!");
+  }
 });
 
 //---------------------------------------
 //URLS Routes
 //---------------------------------------
+app.post("/urls/:id/DELETE", (req, res) => {
+  console.log("found the delete method!");
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls/?alert=success&action=delete");
+});
+
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect("/login");
+    res.status(401).send("try logging in here: <a href='/login'>Login</a>");
   } else {
     var templateVars = {
       urls: urlDatabase.userURLs(req.session.user_id),
@@ -164,51 +178,76 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect("/login");
+    res.status(401).send("You need to <a href='/login'>login</a> to create a new short url!");
   } else {
     res.render("urls_new", users[req.session.user_id]);
   }
 });
 
 
+
 app.get("/urls/:id", (req, res) => {
   debugger;
-  if (!req.session.user_id) {
-    debugger;
-    res.redirect("/login");
+  if (userFuncs.checkShortURLExists(req.params.id, urlDatabase)) {
+    if (!req.session.user_id) {
+      debugger;
+      res.status(401).send("Hey maybe you should try <a href='/login'> logging in </a>?");
+    } else {
+      if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
+        let templateVars = {
+          shortURL: req.params.id,
+          longURL: urlDatabase[req.params.id],
+          username: users[req.session.user_id].username,
+          email: users[req.session.user_id].email,
+          id: users[req.session.user_id].id
+        };
+        debugger;
+        res.render("urls_show", templateVars);
+      } else {
+        res.status(403).send("Hey there buddy, don't touch my short URLS");
+      }
+    }
   } else {
-    let templateVars = {
-      shortURL: req.params.id,
-      longURL: urlDatabase[req.params.id],
-      username: users[req.session.user_id].username,
-      email: users[req.session.user_id].email,
-      id: users[req.session.user_id].id
-    };
-    debugger;
-    res.render("urls_show", templateVars);
+    res.status(404).send("This short URL does not exist :(");
   }
 });
-app.post("/urls/:id/update", (req, res) => {
-  var longURL = req.body.longURL;
-  urlDatabase[req.params.id] = {
-    url: longURL,
-    userid: req.session.user_id
-  };
-  res.redirect("/urls/?alert=success&action=update");
+app.post("/urls/:id", (req, res) => {
+  //confirm short url exists
+  if (userFuncs.checkShortURLExists(req.params.id, urlDatabase)) {
+    //confirm session cookie 
+    if (req.session.user_id) {
+      //confirm user owns short url 
+      if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, uslDatabase)) {
+        var longURL = req.body.longURL;
+        urlDatabase[req.params.id] = {
+          url: longURL,
+          userid: req.session.user_id
+        };
+        res.redirect("/urls/" + req.paramns.id);
+      } else {
+        res.status(401).send("Try logging in <a href='/login'> here </a>");
+      }
+    } else {
+      res.status(403).send("This url doesnt belong to you!");
+    }
+  } else {
+    res.status(404).send("sorry this doesnt exist.");
+  }
 });
 
-app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls/?alert=success&action=delete");
-});
+
 
 app.post("/urls", (req, res) => {
-  let newString = generateRandomString();
-  urlDatabase[newString] = {
-    url: req.body.longURL,
-    userid: req.session.user_id
-  };
-  res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
+  if (req.session.user_id) {
+    let newString = generateRandomString();
+    urlDatabase[newString] = {
+      url: req.body.longURL,
+      userid: req.session.user_id
+    };
+    res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
+  } else {
+    res.status(401).send("You can't do that sir/mama <a href='/login'>login first! </a>");
+  }
 });
 
 //---------------------------------------

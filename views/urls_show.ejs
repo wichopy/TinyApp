@@ -21,13 +21,20 @@
                     <div class='col' style="background-color: lightblue">
                         <%= shortURL %>
                     </div>
-                    <div class="col">
+                    <div class="col" style="display: inline-block;">
+                        Current URL for this shortURL:
+                        <%= longURL.url %>
+                            <form id="update" method="POST" placeholder="<%= longURL.url %>" action=" /urls/<%= shortURL %>">
+                                <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL.url %>" style="width: 300px">
+                                <button type="submit" form="update" value="update">Update
 
-                        <form id="update" method="POST" placeholder="<%= longURL %>" action=" /urls/<%= shortURL %>/update">
-                            <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL %>" style="width: 300px">
-                            <button type="submit" form="update" value="update">Update
                      </button>
-                        </form>
+                            </form>
+                            <div class="inner" style="display: inline-block;">
+                                <form id="delete" method="post" action="/urls/<%= shortURL %>/DELETE">
+                                    <button type="submit" class="btn btn-danger" style="display: inline;">Delete</button>
+                                </form>
+                            </div>
                     </div>
                 </div>
             </div>

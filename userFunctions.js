@@ -24,6 +24,32 @@ module.exports = {
     console.log(login);
     return login;
   },
+  checkShortURLExists: function (urlId, urlDatabase) {
+    /*Accepts [urlId, urlDatabase] and checks if it 
+    exists in your database*/
+
+    for (var shortUrl in urlDatabase) {
+      if (urlId === shortUrl) {
+        return true;
+      }
+    }
+    return false;
+  },
+  confirmOwnership: function (shortURL, user_id, urlDatabase) {
+    /* Accepts [short url, userid, urlDatabase] and 
+    confirms this user id matches with the short url.
+    */
+
+    for (let urlKeys in urlDatabase) {
+      if (shortURL === urlKeys) {
+        if (user_id === urlDatabase[urlKeys].userid) {
+          return true;
+        }
+      }
+    }
+    return false;
+  },
+
 
   findUserId: function (email, users) {
     debugger;
