@@ -136,7 +136,8 @@ app.post('/register', (req, res) => {
 
 app.get("/api", (req, res) => {
   res.json({
-    key: 'Value'
+    users: users,
+    urls: urlDatabase
   });
 }); // chrome plugin for JSON pretify
 
