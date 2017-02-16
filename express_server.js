@@ -30,8 +30,24 @@ const users = {
 };
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userid: '666aaa'
+  },
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userid: '42O77P'
+  },
+  userURLs: function (userid) {
+    var urlData = {};
+    for (var url in this) {
+      debugger;
+      if (this[url].userid == userid) {
+        urlData[url] = this[url].url;
+      }
+    }
+    return urlData;
+  }
 };
 
 //ROUTES!
@@ -117,7 +133,7 @@ app.get("/u/:shortURL", (req, res) => {
 //---------------------------------------
 app.get("/urls", (req, res) => {
   var templateVars = {
-    urls: urlDatabase,
+    urls: urlDatabase.userURLs(req.cookies.id),
     username: users[req.cookies.id].username,
     email: users[req.cookies.id].email,
   };
@@ -125,7 +141,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", users[req.cookies.id]);
+  if (!req.cookies.id) {
+    res.redirect("/login");
+  } else {
+    res.render("urls_new", users[req.cookies.id]);
+  }
 });
 
 
