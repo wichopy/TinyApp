@@ -216,7 +216,7 @@ app.get("/urls/:id", (req, res) => {
 });
 app.post("/urls/:id/update", (req, res) => {
   var longURL = req.body.longURL;
-  urlDatabase[req.params.id] = ("http://" + longURL);
+  urlDatabase[req.params.id] = longURL;
   res.redirect("/urls/?alert=success&action=update");
 });
 
@@ -227,7 +227,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let newString = generateRandomString();
-  urlDatabase[newString] = "http://" + req.body.longURL;
+  urlDatabase[newString] = req.body.longURL;
   res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
 });
 
