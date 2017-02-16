@@ -1,47 +1,18 @@
 var express = require("express");
+const userFuncs = require("./userFunctions.js");
 var app = express();
 var PORT = process.env.PORT || 8080; //adapts to ports of the application.
 const cookieParser = require('cookie-parser');
-
+const generateRandomString = require('./generateRandom.js');
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
+
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
 app.use(bodyParser.json()); // parse submission in multiple formats.
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(cookieParser());
 app.set("view engine", "ejs");
-
-function generateRandomString() {
-  var randnum = function () { return Math.floor(Math.random() * 10); }; //random numbers
-  var randLLet = function () { return Math.floor(Math.random() * (90 - 65 + 1) + 65); }; // random ascii letter upper case
-  var randULet = function () { return Math.floor(Math.random() * (122 - 97 + 1) + 97); }; //random ascii letter lowercase
-  var randArray = [randnum, randLLet, randULet]; ///Generate numbers 0-2 to select a random character.
-  var randNum = function () { return Math.floor(Math.random() * 3); };
-  var randString = "";
-  for (var i = 0; i < 6; i++) {
-    //console.log("pick a random function");
-    //console.log(randNum())
-    var char = randArray[randNum()];
-    //console.log(char);
-    // console.log("run this random function to create a random number or letter");
-    char = char();
-    // console.log(char);
-    if (char >= 0 && char <= 9) {
-      // console.log("add number to randomString")
-      randString += String(char);
-    }
-    if (char >= 65 && char <= 90) {
-      // console.log("add upper case letter to random String")
-      randString += String.fromCharCode(char);
-    }
-    if (char >= 97 && char <= 122) {
-      // console.log("add lower case letter to random String")
-      randString += String.fromCharCode(char);
-    }
-  }
-  return randString;
-}
 
 const users = {
   '666aaa': {
@@ -63,52 +34,6 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-function checkLogin(usernm, passwd) {
-  let login = "failed";
-  for (var userid in users) {
-
-    if (usernm === users[userid].username && passwd === users[userid].password) {
-      login = "login worked!";
-      return login;
-    }
-  }
-  return login;
-}
-
-function checkUserExists(usernm, email) {
-  let login = "login or email is unique";
-  for (var userid in users) {
-    if (usernm === users[userid].username || email === users[userid].email) {
-      login = "return error, email or username exists already";
-    }
-  }
-  console.log(login);
-  return login;
-}
-
-function findUserId(username) {
-  debugger;
-  for (var userId in users) {
-    if (username === users[userId].username) {
-      return userId;
-    }
-  }
-  return false;
-}
-
-function emailFromUserCookie(cookie) {
-  var output = ""
-  for (var userid in users) {
-    console.log(users[userid]);
-    console.log(cookie);
-    if (cookie === users[userid].username) {
-      output = users[userid].email;
-    } else {
-      output = "cant find email in database";
-    }
-  }
-  return output;
-}
 //ROUTES!
 //this can modify the 
 
@@ -145,10 +70,10 @@ app.get('/register', (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (checkLogin(req.body.username, req.body.password) == 'failed') {
+  if (userFuncs.checkLogin(req.body.email, req.body.password, users) == 'failed') {
     res.status(400).send("Wrong username and password!");
   } else {
-    var userid = findUserId(req.body.username);
+    var userid = userFuncs.findUserId(req.body.email, users);
     res.cookie('id', userid, { path: "/" });
     res.redirect("/");
   }
@@ -159,7 +84,7 @@ app.post('/register', (req, res) => {
     res.status(400).send("Make sure you put a password and email address! <img src='https://i.ytimg.com/vi/y7rjewGdwpI/maxresdefault.jpg' width='800' height='600' > ");
 
   } else {
-    if (checkUserExists(req.body.username, req.body.email) === "login or email is unique") {
+    if (userFuncs.checkUserExists(req.body.username, req.body.email, users) === "login or email is unique") {
 
       userid = generateRandomString();
       console.log(req.body);
