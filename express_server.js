@@ -204,6 +204,16 @@ app.get("/u/:shortURL", (req, res) => {
   console.log(req.params.shortURL);
   res.redirect(longURL);
 });
+
+
+
+
+app.get("/hello", (req, res) => {
+  res.end("<html><body>Hello <b>World</b></body></html>\n");
+});
+//---------------------------------------
+//URLS Routes
+//---------------------------------------
 app.get("/urls", (req, res) => {
   var templateVars = {
     urls: urlDatabase,
@@ -232,50 +242,27 @@ app.get("/urls/:id", (req, res) => {
   console.log(templateVars.email);
   res.render("urls_show", templateVars);
 });
-
-
-
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.post("/urls/:id/update", (req, res) => { //may not need to
-  console.log(`Updating ${req.params.id} : change from`); // debug statement to see POST parameters
-  console.log(urlDatabase[req.params.id]);
-  console.log("to");
   var longURL = req.body.longURL;
   urlDatabase[req.params.id] = ("http://" + longURL);
-  console.log(longURL);
-  console.log("This is what the database looks like now:");
-  console.log(urlDatabase); // NEED to put http:// in new address or else it will not redirect properly.
-  //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
-  //var templateVars = { urls: urlDatabase };
   res.redirect("/urls/?alert=success&action=update");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  console.log(`Deleting ${req.params.id}`); // debug statement to see POST parameters
   delete urlDatabase[req.params.id];
-  //res.send("Will delete your entry for you!"); // Respond with 'Ok' (we will replace this)
-  //var templateVars = { urls: urlDatabase };
   res.redirect("/urls/?alert=success&action=delete");
 });
 
-
-
 app.post("/urls", (req, res) => {
-  console.log(req.body); // debug statement to see POST parameters
-  console.log("call randomString generator");
   let newString = generateRandomString();
-  console.log(`add to database`);
   urlDatabase[newString] = "http://" + req.body.longURL;
-  console.log(urlDatabase);
   res.redirect("/urls/?alert=success&action=addnew"); // Respond with 301 or 304 to browser.
 });
 
+//---------------------------------------
+//Listing
+//---------------------------------------
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-module.exports = app;
