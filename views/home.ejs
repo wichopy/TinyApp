@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <title>TinyApp</title>
     <!--
     <script src="../scripts/scripts.js"></script>
@@ -14,11 +15,21 @@
 </head>
 
 <body>
-    <%- include('./partials/_headers') %>
-        <h1>Welcome!</h1>
+    <div class="container">
+        <%- include('./partials/_headers') %>
 
-        <h2><%= username %></h2>
-        <% if (username) {%>
-          <a href="/urls">Check out your urls! </a>
-          <%}%>
+            <% if (username) {%>
+                <h1>Welcome!</h1>
+
+                <h2>
+                    <%= username %>
+                </h2>
+                <a href="/urls">Check out your urls! </a>
+                <% } else {%>
+                    <h1>
+                        Why not make an account?
+                    </h1>
+                    <% }%>
+    </div>
+
 </html>

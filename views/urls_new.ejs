@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <title>TinyApp</title>
     <!--
     <script src="../scripts/scripts.js"></script>
@@ -12,13 +13,18 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 </head>
-  <body>
-  <%- include('./partials/_headers') %>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL:  </label>
-      <input id="longURL" type="text" name="longURL" value = "http://" placeholder="www.yourwebsitehere.com" style="width: 300px">
-      <input type="submit" value="Submit">
-    </form>
-    <p>Go <a href="/urls">back</a> to URL List<p>
-  </body>
+
+<body>
+    <div class="container">
+        <%- include('./partials/_headers') %>
+            <form action="/urls" method="POST" style="margin:150px;">
+                <label for="longURL">Enter a URL:  </label>
+                <input id="longURL" type="text" name="longURL" value="http://" placeholder="www.yourwebsitehere.com" style="width: 300px">
+                <input type="submit" value="Submit">
+            </form>
+            <p>Go <a href="/urls">back</a> to URL List
+                <p>
+    </div>
+</body>
+
 </html>

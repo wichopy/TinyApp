@@ -25,10 +25,11 @@
 </head>
 
 <body>
-    <%- include('./partials/_headers') %>
-        <h2><b>Your Tiny URL's</b> </h2>
-        <div class="putStatusHere"></div>
-        <div class="container">
+    <div class="container">
+        <%- include('./partials/_headers') %>
+            <h2><b>Your Tiny URL's</b> </h2>
+            <div class="putStatusHere"></div>
+
             <table id="urllist" class="table-float" width="600" cellspacing="0">
                 <thead>
                     <tr>
@@ -67,9 +68,9 @@
                 </tbody>
 
             </table>
-        </div>
-        <p> Go <a href="/urls/new">here</a> to shorten another URL!</p>
 
+            <p> Go <a href="/urls/new">here</a> to shorten another URL!</p>
+    </div>
 </body>
 
 </html>

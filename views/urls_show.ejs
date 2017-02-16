@@ -11,27 +11,28 @@
 </head>
 
 <body>
-    <%- include('./partials/_headers') %>
-        <div id="url pair" class="container-fluid container">
-            <div class="row">
-                <h2><b>This URL</b> </h2>
-            </div>
-            <div class="row">
-                <div class='col' style="background-color: lightblue">
-                    <%= shortURL %>
+    <div class="container">
+        <%- include('./partials/_headers') %>
+            <div id="url pair" class="container-fluid container">
+                <div class="row">
+                    <h2><b>This URL</b> </h2>
                 </div>
-                <div class="col">
+                <div class="row">
+                    <div class='col' style="background-color: lightblue">
+                        <%= shortURL %>
+                    </div>
+                    <div class="col">
 
-                    <form id="update" method="POST" placeholder="<%= longURL %>" action=" /urls/<%= shortURL %>/update">
-                        <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL %>" style="width: 300px">
-                        <button type="submit" form="update" value="update">Update
+                        <form id="update" method="POST" placeholder="<%= longURL %>" action=" /urls/<%= shortURL %>/update">
+                            <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL %>" style="width: 300px">
+                            <button type="submit" form="update" value="update">Update
                      </button>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <a href="/urls/">Return to URL List</a>
-
+            <a href="/urls/">Return to URL List</a>
+    </div>
 </body>
 
 </html>
