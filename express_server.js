@@ -66,11 +66,6 @@ var urlDatabase = {
 function checkLogin(usernm, passwd) {
   let login = "failed";
   for (var userid in users) {
-    // console.log("checking for login credentials");
-    // console.log("username is:");
-    // console.log(users[userid]);
-    // console.log(usernm);
-    // console.log(passwd);
 
     if (usernm === users[userid].username && passwd === users[userid].password) {
       login = "login worked!";
