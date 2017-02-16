@@ -1,10 +1,12 @@
+const bcrypt = require('bcrypt');
 module.exports = {
   checkLogin: function (email, passwd, users) {
     debugger;
     let login = "failed";
     for (var userid in users) {
       debugger;
-      if (email === users[userid].email && passwd === users[userid].password) {
+      if (email === users[userid].email && bcrypt.compareSync(passwd, users[userid].password)) {
+        debugger;
         login = "login worked!";
         return login;
       }

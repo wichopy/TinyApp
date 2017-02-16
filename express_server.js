@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const generateRandomString = require('./generateRandom.js');
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
+const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
 app.use(bodyParser.json()); // parse submission in multiple formats.
@@ -18,13 +19,13 @@ const users = {
   '666aaa': {
     username: 'admin',
     email: "admin@tiny.ca",
-    password: "password"
+    password: bcrypt.hashSync("password", 10)
 
   },
   '42O77P': {
     username: 'test',
     email: "test@test.ca",
-    password: "testtest"
+    password: bcrypt.hashSync("testtest", 10)
 
   }
 };
@@ -99,16 +100,23 @@ app.post("/login", (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+  debugger;
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send("Make sure you put a password and email address! <img src='https://i.ytimg.com/vi/y7rjewGdwpI/maxresdefault.jpg' width='800' height='600' > ");
-
+    debugger;
   } else {
+    debugger;
     if (userFuncs.checkUserExists(req.body.username, req.body.email, users) === "login or email is unique") {
-
+      debugger;
       userid = generateRandomString();
       console.log(req.body);
-      users[userid] = req.body;
+      users[userid] = {};
+      users[userid].username = req.body.username;
+      users[userid].email = req.body.email;
       users[userid].id = userid;
+      const pswd = req.body.password;
+      const hashed_password = bcrypt.hashSync(pswd, 10);
+      users[userid].password = hashed_password;
       res.cookie('id', userid, { path: "/" });
       res.redirect("/");
       console.log("this is your users database now");
@@ -141,7 +149,7 @@ app.get("/urls", (req, res) => {
     var templateVars = {
       urls: urlDatabase.userURLs(req.cookies.id),
       username: users[req.cookies.id].username,
-      email: users[req.cookies.id].email,
+      email: users[req.cookies.id].email
     };
     res.render("urls_index", templateVars);
   }
