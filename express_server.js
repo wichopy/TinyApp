@@ -3,12 +3,6 @@ var app = express();
 var PORT = process.env.PORT || 8080; //adapts to ports of the application.
 const cookieParser = require('cookie-parser');
 
-//app.set('port',PORT); 
-//const routes = require("./routes.js");
-
-//app(routes); // require routes.js and use that for our routes.
-//app.get(PORT) //how faisal did it
-//
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
@@ -17,7 +11,6 @@ app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(cookieParser());
 app.set("view engine", "ejs");
-//app.use(express.urlencoded());
 
 function generateRandomString() {
   var randnum = function () { return Math.floor(Math.random() * 10); }; //random numbers
@@ -50,9 +43,6 @@ function generateRandomString() {
   return randString;
 }
 
-
-
-
 const users = {
   '666aaa': {
     username: 'admin',
@@ -67,9 +57,6 @@ const users = {
 
   }
 };
-
-
-
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -90,19 +77,12 @@ function checkLogin(usernm, passwd) {
       return login;
     }
   }
-  console.log(login);
   return login;
 }
 
 function checkUserExists(usernm, email) {
   let login = "login or email is unique";
   for (var userid in users) {
-    // console.log("checking for login credentials");
-    // console.log("username is:");
-    // console.log(users[userid]);
-    // console.log(usernm);
-    // console.log(passwd);
-
     if (usernm === users[userid].username || email === users[userid].email) {
       login = "return error, email or username exists already";
     }
@@ -146,72 +126,39 @@ function emailFromUserCookie(cookie) {
 //HOMEPAGE
 //-------------------
 app.get("/", (req, res) => {
-  // let templateVars = {
-  //   id: req.cookies.id,
-  //   email: emailFromUserCookie(req.cookies.name)
-  // };
-  //console.log(req.cookies);
-  //console.log(Object(req.cookies).keys);
   if (!req.cookies.id) { ///UNDEFINED IS FALSEY!!
-    console.log("Empty cookie");
-    console.log({ username: false, email: false });
     res.render("home", { username: false, email: false }); //pass in false username and email info to force login or register in header.
   } else {
-    console.log("this is the cookie and userid");
-    console.log(req.cookies);
-    console.log(users[req.cookies.id]);
     res.render("home", users[req.cookies.id]);
   }
 });
-
 
 //--------------------
 //login/register/logout
 //-------------------
 app.get("/logout", (req, res) => {
-  console.log("Loging out, clear cookies for this session.");
   res.clearCookie('id', { path: "/" });
-  console.log(req.cookies);
   res.redirect("/"); //If you don't send a response your cookie wont be cleared.
 });
 
 app.get("/login", (req, res) => {
-  // let templateVars = {
-  //   username: req.cookies['name'],
-  //   email: emailFromUserCookie(req.cookies.name)
-  // };
-  res.render("login", users);
+  res.render("login");
+});
+
+app.get('/register', (req, res) => {
+  res.render("register", users);
 });
 
 app.post("/login", (req, res) => {
-
   if (checkLogin(req.body.username, req.body.password) == 'failed') {
     res.status(400).send("Wrong username and password!");
   } else {
-    //function to check username and password.
-    //console.log(req.cookie);
-    console.log(req.body);
     var userid = findUserId(req.body.username);
     res.cookie('id', userid, { path: "/" });
-    //console.log(res.cookies());
     res.redirect("/");
   }
 });
 
-app.get('/register', (req, res) => {
-  console.log("lets make a new user!");
-  // var templateVars = {
-  //   username: req.cookies['name'],
-  //   email: emailFromUserCookie(req.cookies.name)
-  // };
-  res.render("register", users);
-  //need to implement status codes for:
-  //if user exists already.
-  //if email or password are empty.
-  //if email exists already.
-
-});
-//use res.cookie to access cookies in responses.
 app.post('/register', (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send("Make sure you put a password and email address! <img src='https://i.ytimg.com/vi/y7rjewGdwpI/maxresdefault.jpg' width='800' height='600' > ");
@@ -239,39 +186,25 @@ app.get("/api", (req, res) => {
     key: 'Value'
   });
 }); // chrome plugin for JSON pretify
+
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
-  console.log("trying to redirect now ...");
-  console.log(longURL);
-  console.log(req.params.shortURL);
   res.redirect(longURL);
 });
 
-
-
-
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
-});
 //---------------------------------------
 //URLS Routes
 //---------------------------------------
 app.get("/urls", (req, res) => {
-  console.log("this is the cookie and userid");
-  console.log(req.cookies);
   var templateVars = {
     urls: urlDatabase,
     username: users[req.cookies.id].username,
     email: users[req.cookies.id].email,
-  }; //all of them are stored in an object called locals
+  };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  // var templateVars = {
-  //   username: req.cookies['name'],
-  //   email: emailFromUserCookie(req.cookies.name)
-  // }
   res.render("urls_new", users[req.cookies.id]);
 });
 
@@ -284,10 +217,9 @@ app.get("/urls/:id", (req, res) => {
     email: users[req.cookies.id].email,
     id: users[req.cookies.id].id
   };
-  console.log(templateVars.email);
   res.render("urls_show", templateVars);
 });
-app.post("/urls/:id/update", (req, res) => { //may not need to
+app.post("/urls/:id/update", (req, res) => {
   var longURL = req.body.longURL;
   urlDatabase[req.params.id] = ("http://" + longURL);
   res.redirect("/urls/?alert=success&action=update");
@@ -305,7 +237,7 @@ app.post("/urls", (req, res) => {
 });
 
 //---------------------------------------
-//Listing
+//Listening
 //---------------------------------------
 
 app.listen(PORT, () => {
