@@ -47,27 +47,42 @@ const users = {
 };
 
 //database: [Date-Time / urlID / visitorID]
-const visitHistory = [
-  ["01/01/2017", "b2xVn2", "123fgA"],
-  ["01/03/2017", "b2xVn2", "123fgA"],
-  ["01/04/2017", "9sm5xK", "123fgA"],
-  ["01/06/2017", "9sm5xK", "123fgA"],
-  ["01/15/2017", "b2xVn2", "123fgA"],
+const visitHistory = [{
+    date: "01/01/2017",
+    urlId: "b2xVn2",
+    visitorId: "123fgA"
+  },
+  {
+    date: "01/02/2017",
+    urlId: "b2xVn2",
+    visitorId: "123fgA"
+  },
+  {
+    date: "01/03/2017",
+    urlId: "9sm5xK",
+    visitorId: "fgA234"
+  },
+  {
+    date: "01/04/2017",
+    urlId: "b2xVn2",
+    visitorId: "fgA234"
+  },
+  {
+    date: "01/05/2017",
+    urlId: "9sm5xK",
+    visitorId: "123fgA"
+  }
 ];
 
 
 const urlDatabase = {
   "b2xVn2": {
     url: "http://www.lighthouselabs.ca",
-    userid: '666aaa',
-    visited: 12,
-    uniqueVisitors: 2,
+    userid: '666aaa'
   },
   "9sm5xK": {
     url: "http://www.google.com",
-    userid: '42O77P',
-    visited: 35,
-    uniqueVisitors: 5,
+    userid: '42O77P'
   },
   userURLs: function (userid) {
     //query database for url's for the user id.
@@ -81,7 +96,31 @@ const urlDatabase = {
     return urlData;
   },
   urlVisitHistory: function (urlId, visitdb) {
-
+    //returns array of all visits to a urlID
+    //reduce array of objects into 
+    return visitdb
+      .filter((datelog) => {
+        return datelog.urlId === urlId;
+      });
+  },
+  urlViewCount: (urlId, visitdb) => {
+    //Returns total view count of urlID
+    return visitdb
+      .filter((datelog) => {
+        return datelog.urlId === urlId;
+      }).length;
+  },
+  urlUniqueVisit: (urlId, visitdb) => {
+    //Returns unique count of visitors.
+    //loop through object and add any visitor ID's to an object.
+    //return count of keys.
+    let uniqueVisits = {};
+    for (var datelog in visitdb) {
+      if (!uniqueVisits[datelog.visitorId]) {
+        uniqueVisits[datelog.visitorId] = 1;
+      }
+    }
+    return Object.keys(uniqueVisits).length;
   }
 };
 //********************* */
