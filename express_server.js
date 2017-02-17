@@ -152,11 +152,7 @@ app.get("/u/:shortURL", (req, res) => {
 //---------------------------------------
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
-<<<<<<< HEAD
     res.status(401).send("Yo dude <a href='/login'> login</a> first!");
-=======
-    res.status(401).send("try logging in here: <a href='/login'>Login</a>");
->>>>>>> method-override
   } else {
     var templateVars = {
       urls: urlDatabase.userURLs(req.session.user_id),
@@ -169,11 +165,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
-<<<<<<< HEAD
-    res.status(401).send("Yo dude <a href='/login'> login</a> first!");
-=======
     res.status(401).send("You need to <a href='/login'>login</a> to create a new short url!");
->>>>>>> method-override
   } else {
     res.render("urls_new", users[req.session.user_id]);
   }
