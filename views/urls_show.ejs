@@ -22,12 +22,39 @@
                         <p>
                             <%= shortURL %>
                         </p>
-                        View count:
-                        <%= viewcount %>
+                        <p>
+                            View count:
+                            <%= viewcount %>
+                        </p>
+                        <p>
                             Unique viewers:
                             <%= uniqueviewers %>
-                                View log:
-                                <%= viewlog %>
+                        </p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        User Id
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbodY>
+                                <% for (var log in viewlog) { %>
+                                    <tr>
+                                        <td>
+                                            <%= viewlog[log].date %>
+                                        </td>
+                                        <td>
+                                            <%= viewlog[log].visitorId %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="col" style="display: inline-block;">
                         Current URL for this shortURL:

@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 8080; //adapts to ports of the application.
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
-  keys: ['user_id'],
+  keys: ['user_id', 'datevisit'],
   maxAge: 15 * 60 * 1000 //expires after 15 minutes
 }));
 
@@ -115,7 +115,7 @@ const urlDatabase = {
     //loop through object and add any visitor ID's to an object.
     //return count of keys.
     let uniqueVisits = {};
-    for (var datelog in visitdb) {
+    for (var datelog of visitdb) {
       if (!uniqueVisits[datelog.visitorId]) {
         uniqueVisits[datelog.visitorId] = 1;
       }
@@ -126,6 +126,22 @@ const urlDatabase = {
 //********************* */
 //ROUTES!
 //************************ */
+
+//----------------------------
+//Redirect to your long URL
+//--------------------------------
+app.get("/u/:shortURL", (req, res) => {
+  if (urlDatabase[req.params.shortURL]) {
+    let d = new Date;
+    req.session.datevisit = d;
+    console.log(req.session.datevisit);
+    res.redirect(urlDatabase[req.params.shortURL].url);
+  } else {
+    res.status(404).send("No short URL here! Sorry!");
+  }
+});
+
+
 
 //If you want to see my data without console logging use this handy link!
 app.get("/api", (req, res) => {
@@ -201,16 +217,6 @@ app.post('/register', (req, res) => { // keep as post, creating a user.
   }
 });
 
-//----------------------------
-//Redirect to your long URL
-//--------------------------------
-app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]) {
-    res.redirect(urlDatabase[req.params.shortURL].url);
-  } else {
-    res.status(404).send("No short URL here! Sorry!");
-  }
-});
 
 //---------------------------------------
 //URL GETS
@@ -242,6 +248,7 @@ app.get("/urls/:id", (req, res) => {
       res.status(401).send("Hey maybe you should try <a href='/login'> logging in </a>?");
     } else {
       if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
+        console.log(urlDatabase.urlVisitHistory(req.params.id, visitHistory));
         let templateVars = {
           shortURL: req.params.id,
           longURL: urlDatabase[req.params.id],
