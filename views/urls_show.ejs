@@ -24,7 +24,7 @@
                     <div class="col" style="display: inline-block;">
                         Current URL for this shortURL:
                         <%= longURL.url %>
-                            <form id="update" method="POST" placeholder="<%= longURL.url %>" action=" /urls">
+                            <form id="update" method="POST" placeholder="<%= longURL.url %>" action=" /urls/<%= shortURL %>">
                                 <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL.url %>" style="width: 300px">
                                 <input type="hidden" name="_method" value="PUT" />
                                 <button type="submit" form="update" value="update" class="btn btn-primary" style="display-inline;">Update</button>

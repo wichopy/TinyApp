@@ -124,7 +124,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', (req, res) => { // keep as post, creating a user.
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send("Make sure you put a password and email address! <img src='https://i.ytimg.com/vi/y7rjewGdwpI/maxresdefault.jpg' width='800' height='600' > ");
   } else {
@@ -207,8 +207,11 @@ app.get("/urls/:id", (req, res) => {
 //------------------------
 // URL POSTS
 //------------------------
-app.post("/urls/:id", (req, res) => {
+//this is for updating a url in the database.
+app.put("/urls/:id", (req, res) => {
   //confirm short url exists
+  //console.log(req);
+
   if (userFuncs.checkShortURLExists(req.params.id, urlDatabase)) {
     //confirm session cookie
     if (req.session.user_id) {
@@ -219,7 +222,7 @@ app.post("/urls/:id", (req, res) => {
           url: longURL,
           userid: req.session.user_id
         };
-        res.redirect("/urls/" + req.paramns.id);
+        res.redirect("/urls/"); // this was giving me errors trying to redirect back to the update page.
       } else {
         res.status(401).send("Try logging in <a href='/login'> here </a>");
       }
@@ -230,13 +233,14 @@ app.post("/urls/:id", (req, res) => {
     res.status(404).send("sorry this doesnt exist.");
   }
 });
-
+//this is used for deleting a short URL from the database
 app.delete("/urls/:id/DELETE", (req, res) => {
   console.log("deleting!");
   delete urlDatabase[req.params.id];
   res.redirect("/urls/?alert=success&action=delete"); //was going to implement some jQuery alerts for when I deleted or updated URLS but no more time.
 });
 
+//this is used for adding a new url to the database. put is safer as it will guarentee it only gets created once.
 app.put("/urls", (req, res) => {
   if (req.session.user_id) {
     var newString = generateRandomString();
