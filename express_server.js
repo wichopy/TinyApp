@@ -13,9 +13,18 @@ const generateRandomString = require('./generateRandom.js'); //random string gen
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-
+const methodOverride = require('method-override');
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
 app.use(bodyParser.json()); // parse submission in multiple formats.
+app.use(methodOverride());
+app.use(methodOverride(function (req, res) {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    var method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
+}));
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
@@ -177,7 +186,7 @@ app.get("/urls/:id", (req, res) => {
       res.status(401).send("Hey maybe you should try <a href='/login'> logging in </a>?");
     } else {
       if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
-        let templateVars = {
+        var templateVars = {
           shortURL: req.params.id,
           longURL: urlDatabase[req.params.id],
           username: users[req.session.user_id].username,
@@ -222,14 +231,16 @@ app.post("/urls/:id", (req, res) => {
   }
 });
 
-app.post("/urls/:id/DELETE", (req, res) => {
+app.delete("/urls/:id/DELETE", (req, res) => {
+  console.log("deleting!");
+  console.log(req);
   delete urlDatabase[req.params.id];
   res.redirect("/urls/?alert=success&action=delete"); //was going to implement some jQuery alerts for when I deleted or updated URLS but no more time.
 });
 
 app.post("/urls", (req, res) => {
   if (req.session.user_id) {
-    let newString = generateRandomString();
+    var newString = generateRandomString();
     urlDatabase[newString] = {
       url: req.body.longURL,
       userid: req.session.user_id
