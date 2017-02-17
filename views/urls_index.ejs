@@ -57,7 +57,8 @@
                                     </form>
                                 </div>
                                 <div class="inner" style="display: inline-block;">
-                                    <form id="delete" method="post" action="/urls/<%= url %>/DELETE">
+                                    <form id="delete" method="post" name="_method" value="DELETE" action="/urls/<%= url %>/DELETE">
+                                        <input type="hidden" name="_method" value="DELETE" />
                                         <button type="submit" class="btn btn-danger" style="display: inline;">Delete</button>
                                     </form>
                                 </div>

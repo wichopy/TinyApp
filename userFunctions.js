@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 module.exports = {
   checkLogin: function (email, passwd, users) {
-    let login = "failed";
+    var login = "failed";
     for (var userid in users) {
       if (email === users[userid].email && bcrypt.compareSync(passwd, users[userid].password)) {
         login = "login worked!";
@@ -22,7 +22,7 @@ module.exports = {
     return false;
   },
   checkUserExists: function (usernm, email, users) {
-    let login = "login or email is unique";
+    var login = "login or email is unique";
     for (var userid in users) {
       if (usernm === users[userid].username || email === users[userid].email) {
         login = "return error, email or username exists already";
@@ -46,7 +46,7 @@ module.exports = {
     /* Accepts [short url, userid, urlDatabase] and 
     confirms this user id matches with the short url.
     */
-    for (let urlKeys in urlDatabase) {
+    for (var urlKeys in urlDatabase) {
       if (shortURL === urlKeys) {
         if (user_id === urlDatabase[urlKeys].userid) {
           return true;

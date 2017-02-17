@@ -13,9 +13,18 @@ const generateRandomString = require('./generateRandom.js'); //random string gen
 var morgan = require("morgan");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-
+const methodOverride = require('method-override');
 app.use(bodyParser.urlencoded({ entended: true })); //x-www-form-urlencoded things can be submitted in different formats, could be in the url, body-parser will json it for us.
 app.use(bodyParser.json()); // parse submission in multiple formats.
+app.use(methodOverride());
+app.use(methodOverride(function (req, res) {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    var method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
+}));
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
@@ -115,7 +124,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', (req, res) => { // keep as post, creating a user.
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send("Make sure you put a password and email address! <img src='https://i.ytimg.com/vi/y7rjewGdwpI/maxresdefault.jpg' width='800' height='600' > ");
   } else {
@@ -177,7 +186,7 @@ app.get("/urls/:id", (req, res) => {
       res.status(401).send("Hey maybe you should try <a href='/login'> logging in </a>?");
     } else {
       if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
-        let templateVars = {
+        var templateVars = {
           shortURL: req.params.id,
           longURL: urlDatabase[req.params.id],
           username: users[req.session.user_id].username,
@@ -198,8 +207,11 @@ app.get("/urls/:id", (req, res) => {
 //------------------------
 // URL POSTS
 //------------------------
-app.post("/urls/:id", (req, res) => {
+//this is for updating a url in the database.
+app.put("/urls/:id", (req, res) => {
   //confirm short url exists
+  //console.log(req);
+
   if (userFuncs.checkShortURLExists(req.params.id, urlDatabase)) {
     //confirm session cookie
     if (req.session.user_id) {
@@ -210,7 +222,7 @@ app.post("/urls/:id", (req, res) => {
           url: longURL,
           userid: req.session.user_id
         };
-        res.redirect("/urls/");
+        res.redirect("/urls/"); // this was giving me errors trying to redirect back to the update page.
       } else {
         res.status(401).send("Try logging in <a href='/login'> here </a>");
       }
@@ -221,15 +233,17 @@ app.post("/urls/:id", (req, res) => {
     res.status(404).send("sorry this doesnt exist.");
   }
 });
-
-app.post("/urls/:id/DELETE", (req, res) => {
+//this is used for deleting a short URL from the database
+app.delete("/urls/:id/DELETE", (req, res) => {
+  console.log("deleting!");
   delete urlDatabase[req.params.id];
   res.redirect("/urls/?alert=success&action=delete"); //was going to implement some jQuery alerts for when I deleted or updated URLS but no more time.
 });
 
-app.post("/urls", (req, res) => {
+//this is used for adding a new url to the database. put is safer as it will guarentee it only gets created once.
+app.put("/urls", (req, res) => {
   if (req.session.user_id) {
-    let newString = generateRandomString();
+    var newString = generateRandomString();
     urlDatabase[newString] = {
       url: req.body.longURL,
       userid: req.session.user_id
