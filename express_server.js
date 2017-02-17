@@ -210,7 +210,7 @@ app.post("/urls/:id", (req, res) => {
           url: longURL,
           userid: req.session.user_id
         };
-        res.redirect("/urls/" + req.paramns.id);
+        res.redirect("/urls/");
       } else {
         res.status(401).send("Try logging in <a href='/login'> here </a>");
       }
