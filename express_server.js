@@ -1,7 +1,7 @@
-var express = require("express");
+const express = require("express");
 const userFuncs = require("./userFunctions.js"); //functions for querying database.
-var app = express();
-var PORT = process.env.PORT || 8080; //adapts to ports of the application.
+const app = express();
+const PORT = process.env.PORT || 8080; //adapts to ports of the application.
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
@@ -10,7 +10,7 @@ app.use(cookieSession({
 }));
 
 const generateRandomString = require('./generateRandom.js'); //random string generator.
-var morgan = require("morgan");
+const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
@@ -20,7 +20,7 @@ app.use(methodOverride());
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     // look in urlencoded POST bodies and delete it
-    var method = req.body._method;
+    let method = req.body._method;
     delete req.body._method;
     return method;
   }
@@ -46,25 +46,42 @@ const users = {
   }
 };
 
-var urlDatabase = {
+//database: [Date-Time / urlID / visitorID]
+const visitHistory = [
+  ["01/01/2017", "b2xVn2", "123fgA"],
+  ["01/03/2017", "b2xVn2", "123fgA"],
+  ["01/04/2017", "9sm5xK", "123fgA"],
+  ["01/06/2017", "9sm5xK", "123fgA"],
+  ["01/15/2017", "b2xVn2", "123fgA"],
+];
+
+
+const urlDatabase = {
   "b2xVn2": {
     url: "http://www.lighthouselabs.ca",
-    userid: '666aaa'
+    userid: '666aaa',
+    visited: 12,
+    uniqueVisitors: 2,
   },
   "9sm5xK": {
     url: "http://www.google.com",
-    userid: '42O77P'
+    userid: '42O77P',
+    visited: 35,
+    uniqueVisitors: 5,
   },
   userURLs: function (userid) {
     //query database for url's for the user id.
-    var urlData = {};
-    for (var url in this) {
+    let urlData = {};
+    for (let url in this) {
 
       if (this[url].userid == userid) {
         urlData[url] = this[url].url;
       }
     }
     return urlData;
+  },
+  urlVisitHistory: function (urlId, visitdb) {
+
   }
 };
 //********************* */
@@ -163,7 +180,7 @@ app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.status(401).send("Yo dude <a href='/login'> login</a> first!");
   } else {
-    var templateVars = {
+    let templateVars = {
       urls: urlDatabase.userURLs(req.session.user_id),
       username: users[req.session.user_id].username,
       email: users[req.session.user_id].email
@@ -186,7 +203,7 @@ app.get("/urls/:id", (req, res) => {
       res.status(401).send("Hey maybe you should try <a href='/login'> logging in </a>?");
     } else {
       if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
-        var templateVars = {
+        let templateVars = {
           shortURL: req.params.id,
           longURL: urlDatabase[req.params.id],
           username: users[req.session.user_id].username,
@@ -217,12 +234,12 @@ app.put("/urls/:id", (req, res) => {
     if (req.session.user_id) {
       //confirm user owns short url
       if (userFuncs.confirmOwnership(req.params.id, req.session.user_id, urlDatabase)) {
-        var longURL = req.body.longURL;
+        let longURL = req.body.longURL;
         urlDatabase[req.params.id] = {
           url: longURL,
           userid: req.session.user_id
         };
-        res.redirect("/urls/?alert=success&action=update");
+        res.redirect("/urls/?alert=success&action=update"); // this was giving me errors trying to redirect back to the update page.
       } else {
         res.status(401).send("Try logging in <a href='/login'> here </a>");
       }
@@ -243,7 +260,7 @@ app.delete("/urls/:id/DELETE", (req, res) => {
 //this is used for adding a new url to the database. put is safer as it will guarentee it only gets created once.
 app.put("/urls", (req, res) => {
   if (req.session.user_id) {
-    var newString = generateRandomString();
+    let newString = generateRandomString();
     urlDatabase[newString] = {
       url: req.body.longURL,
       userid: req.session.user_id
