@@ -247,7 +247,10 @@ app.get("/urls/:id", (req, res) => {
           longURL: urlDatabase[req.params.id],
           username: users[req.session.user_id].username,
           email: users[req.session.user_id].email,
-          id: users[req.session.user_id].id
+          id: users[req.session.user_id].id,
+          viewcount: urlDatabase.urlViewCount(req.params.id, visitHistory),
+          uniqueviewers: urlDatabase.urlUniqueVisit(req.params.id, visitHistory),
+          viewlog: urlDatabase.urlVisitHistory(req.params.id, visitHistory)
         };
         res.render("urls_show", templateVars);
       } else {

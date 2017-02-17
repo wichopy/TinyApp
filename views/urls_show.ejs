@@ -19,7 +19,15 @@
                 </div>
                 <div class="row">
                     <div class='col' style="background-color: lightblue">
-                        <%= shortURL %>
+                        <p>
+                            <%= shortURL %>
+                        </p>
+                        View count:
+                        <%= viewcount %>
+                            Unique viewers:
+                            <%= uniqueviewers %>
+                                View log:
+                                <%= viewlog %>
                     </div>
                     <div class="col" style="display: inline-block;">
                         Current URL for this shortURL:
@@ -38,8 +46,11 @@
                     </div>
                 </div>
             </div>
-            <a href="/urls/">Return to URL List</a>
+
     </div>
+
+
+    <a href="/urls/">Return to URL List</a>
 </body>
 
 </html>
