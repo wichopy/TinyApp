@@ -24,14 +24,14 @@
                     <div class="col" style="display: inline-block;">
                         Current URL for this shortURL:
                         <%= longURL.url %>
-                            <form id="update" method="POST" placeholder="<%= longURL.url %>" action=" /urls/<%= shortURL %>">
+                            <form id="update" method="POST" placeholder="<%= longURL.url %>" action=" /urls">
                                 <input id="longURL" type="text" name="longURL" value="http://" placeholder=" <%= longURL.url %>" style="width: 300px">
-                                <button type="submit" form="update" value="update">Update
-
-                     </button>
+                                <input type="hidden" name="_method" value="PUT" />
+                                <button type="submit" form="update" value="update" class="btn btn-primary" style="display-inline;">Update</button>
                             </form>
                             <div class="inner" style="display: inline-block;">
-                                <form id="delete" method="post" action="/urls/<%= shortURL %>/DELETE">
+                                <form id="delete" method="post" name="_method" value="DELETE" action="/urls/<%= shortURL %>/DELETE">
+                                    <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger" style="display: inline;">Delete</button>
                                 </form>
                             </div>

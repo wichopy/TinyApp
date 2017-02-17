@@ -233,12 +233,11 @@ app.post("/urls/:id", (req, res) => {
 
 app.delete("/urls/:id/DELETE", (req, res) => {
   console.log("deleting!");
-  console.log(req);
   delete urlDatabase[req.params.id];
   res.redirect("/urls/?alert=success&action=delete"); //was going to implement some jQuery alerts for when I deleted or updated URLS but no more time.
 });
 
-app.post("/urls", (req, res) => {
+app.put("/urls", (req, res) => {
   if (req.session.user_id) {
     var newString = generateRandomString();
     urlDatabase[newString] = {
