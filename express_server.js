@@ -222,7 +222,7 @@ app.put("/urls/:id", (req, res) => {
           url: longURL,
           userid: req.session.user_id
         };
-        res.redirect("/urls/"); // this was giving me errors trying to redirect back to the update page.
+        res.redirect("/urls/?alert=success&action=update");
       } else {
         res.status(401).send("Try logging in <a href='/login'> here </a>");
       }
