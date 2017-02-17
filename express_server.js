@@ -131,10 +131,24 @@ const urlDatabase = {
 //Redirect to your long URL
 //--------------------------------
 app.get("/u/:shortURL", (req, res) => {
+  console.log(req.session.visitorId);
   if (urlDatabase[req.params.shortURL]) {
-    let d = new Date;
-    req.session.datevisit = d;
-    console.log(req.session.datevisit);
+    if (req.session.visitorId) {
+      visitHistory.push({
+        date: Date(),
+        urlId: req.params.shortURL,
+        visitorId: req.session.visitorId
+      });
+      console.log(`Hey look its ${req.session.visitorId}!`);
+    } else {
+      req.session.visitorId = generateRandomString();
+      console.log(`Creating a new cookie for this user!${req.session.visitorId}`);
+      visitHistory.push({
+        date: Date(),
+        urlId: req.params.shortURL,
+        visitorId: req.session.visitorId
+      });
+    }
     res.redirect(urlDatabase[req.params.shortURL].url);
   } else {
     res.status(404).send("No short URL here! Sorry!");
@@ -147,7 +161,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/api", (req, res) => {
   res.json({
     users: users,
-    urls: urlDatabase
+    urls: urlDatabase,
+    visitHistory: visitHistory
   });
 }); // chrome plugin for JSON pretify
 
